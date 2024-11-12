@@ -1,0 +1,3 @@
+﻿Id,ItemName,Description,Type,IconPath
+1,potion,체력 포션이다. 마시면 체력이 50회복된다.,Consumable,Icons/potion
+2,Sword,용맹함이 흘러넘치는 칼이다.,Equipment,Icons/sword
