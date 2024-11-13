@@ -79484,6 +79484,7 @@ GameObject:
   - component: {fileID: 776441320}
   - component: {fileID: 776441319}
   - component: {fileID: 776441323}
+  - component: {fileID: 776441327}
   - component: {fileID: 776441322}
   - component: {fileID: 776441321}
   - component: {fileID: 776441325}
@@ -79556,7 +79557,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776441318}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.35, y: 45.54, z: 0}
+  m_LocalPosition: {x: 17.533, y: 45.552, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -79594,9 +79595,9 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!70 &776441323
 CapsuleCollider2D:
@@ -79611,8 +79612,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.03249362}
-  m_Size: {x: 0.11466887, y: 0.22123985}
+  m_Offset: {x: -0.0026130676, y: -0.1109066}
+  m_Size: {x: 0.32565308, y: 0.6758995}
   m_Direction: 0
 --- !u!95 &776441324
 Animator:
@@ -79665,9 +79666,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 776441318}
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 128
+  circleCollider: {fileID: 776441327}
+  capsuleCollider: {fileID: 776441323}
+  compositeCollider: {fileID: 70862739}
+  isColliding: 0
+--- !u!58 &776441327
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776441318}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.1}
+  serializedVersion: 2
+  m_Radius: 0.49
 --- !u!1 &831859113
 GameObject:
   m_ObjectHideFlags: 0
