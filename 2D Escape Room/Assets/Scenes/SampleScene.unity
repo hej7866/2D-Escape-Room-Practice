@@ -79484,7 +79484,7 @@ GameObject:
   - component: {fileID: 776441320}
   - component: {fileID: 776441319}
   - component: {fileID: 776441323}
-  - component: {fileID: 776441327}
+  - component: {fileID: 776441328}
   - component: {fileID: 776441322}
   - component: {fileID: 776441321}
   - component: {fileID: 776441325}
@@ -79612,8 +79612,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0026130676, y: -0.1109066}
-  m_Size: {x: 0.32565308, y: 0.6758995}
+  m_Offset: {x: -0.0026130676, y: -0.097421646}
+  m_Size: {x: 0.32565308, y: 0.9725456}
   m_Direction: 0
 --- !u!95 &776441324
 Animator:
@@ -79666,26 +79666,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 776441318}
-  circleCollider: {fileID: 776441327}
-  capsuleCollider: {fileID: 776441323}
+  capsuleColliderV: {fileID: 776441323}
+  capsuleColliderH: {fileID: 776441328}
   compositeCollider: {fileID: 70862739}
   isColliding: 0
---- !u!58 &776441327
-CircleCollider2D:
+--- !u!70 &776441328
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776441318}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.1}
-  serializedVersion: 2
-  m_Radius: 0.49
+  m_Offset: {x: -0.002613068, y: -0.09742165}
+  m_Size: {x: 0.97, y: 0.3}
+  m_Direction: 1
 --- !u!1 &831859113
 GameObject:
   m_ObjectHideFlags: 0

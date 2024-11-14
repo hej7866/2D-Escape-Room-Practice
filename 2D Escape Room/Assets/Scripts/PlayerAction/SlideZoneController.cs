@@ -11,9 +11,9 @@ public class SlideZoneController : MonoBehaviour
     private float moveSpeed = 5f; // 이동 속도
     private Vector2 moveDirection = Vector2.zero; // 이동 방향
 
-    public CircleCollider2D circleCollider;
-    public CapsuleCollider2D capsuleCollider;
-    public CompositeCollider2D compositeCollider;
+    public CapsuleCollider2D capsuleColliderV; // Vertical 캡슐 콜라이더
+    public CapsuleCollider2D capsuleColliderH; // Horizontal 캡슐 콜라이더
+    public CompositeCollider2D compositeCollider; // 충돌용 콜라이더
 
     public bool isColliding;
 
@@ -23,9 +23,8 @@ public class SlideZoneController : MonoBehaviour
         playerAction = player.GetComponent<PlayerAction>();
         rb2d = player.GetComponent<Rigidbody2D>();
 
-        // 시작 시 캡슐 콜라이더 활성화, 박스 콜라이더 비활성화
-        if (capsuleCollider != null) capsuleCollider.enabled = true;
-        if (circleCollider != null) circleCollider.enabled = false;
+        // 초기 콜라이더 설정
+        EnableVerticalCollider(); // 기본적으로 Vertical Collider 활성화
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -35,10 +34,6 @@ public class SlideZoneController : MonoBehaviour
             // PlayerAction 비활성화, SlideZoneController 활성화
             playerAction.enabled = false;
             this.enabled = true;
-
-            // 캡슐 콜라이더 비활성화, 박스 콜라이더 활성화
-            if (capsuleCollider != null) capsuleCollider.enabled = false;
-            if (circleCollider != null) circleCollider.enabled = true;
         }
     }
 
@@ -50,10 +45,6 @@ public class SlideZoneController : MonoBehaviour
             playerAction.enabled = true;
             this.enabled = false;
 
-            // 박스 콜라이더 비활성화, 캡슐 콜라이더 활성화
-            if (circleCollider != null) circleCollider.enabled = false;
-            if (capsuleCollider != null) capsuleCollider.enabled = true;
-
             // Rigidbody2D 설정 변경
             rb2d.velocity = Vector2.zero;
             moveDirection = Vector2.zero;
@@ -62,14 +53,14 @@ public class SlideZoneController : MonoBehaviour
 
     void Update()
     {
-        if (circleCollider != null && compositeCollider != null)
+        if (capsuleColliderV != null && capsuleColliderH != null && compositeCollider != null)
         {
-            isColliding = circleCollider.IsTouching(compositeCollider);
+            isColliding = capsuleColliderV.IsTouching(compositeCollider) || capsuleColliderH.IsTouching(compositeCollider);
             Debug.Log($"IsColliding: {isColliding}");
 
             if (isColliding)
             {
-                Debug.Log("CircleCollider2D와 TilemapCollider2D가 충돌 중입니다.");
+                Debug.Log("Collider와 CompositeCollider가 충돌 중입니다.");
                 SlideMove();
             }
             else
@@ -79,30 +70,33 @@ public class SlideZoneController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("CircleCollider2D 또는 TilemapCollider2D가 제대로 연결되지 않았습니다.");
+            Debug.LogWarning("Collider가 제대로 연결되지 않았습니다.");
         }
 
         Debug.Log("Update - rb2d.velocity: " + rb2d.velocity);
     }
-
 
     void SlideMove()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             moveDirection = Vector2.up;
+            EnableVerticalCollider(); // 위쪽으로 이동 시 Vertical Collider 활성화
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             moveDirection = Vector2.down;
+            EnableVerticalCollider(); // 아래쪽으로 이동 시 Vertical Collider 활성화
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             moveDirection = Vector2.left;
+            EnableHorizontalCollider(); // 왼쪽으로 이동 시 Horizontal Collider 활성화
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             moveDirection = Vector2.right;
+            EnableHorizontalCollider(); // 오른쪽으로 이동 시 Horizontal Collider 활성화
         }
     }
 
@@ -111,5 +105,19 @@ public class SlideZoneController : MonoBehaviour
         // rb2d.velocity 디버그 출력
         Debug.Log("FixedUpdate - rb2d.velocity: " + rb2d.velocity);
         rb2d.MovePosition(rb2d.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
+    }
+
+    // Vertical Collider 활성화, Horizontal Collider 비활성화
+    void EnableVerticalCollider()
+    {
+        if (capsuleColliderV != null) capsuleColliderV.enabled = true;
+        if (capsuleColliderH != null) capsuleColliderH.enabled = false;
+    }
+
+    // Horizontal Collider 활성화, Vertical Collider 비활성화
+    void EnableHorizontalCollider()
+    {
+        if (capsuleColliderH != null) capsuleColliderH.enabled = true;
+        if (capsuleColliderV != null) capsuleColliderV.enabled = false;
     }
 }
