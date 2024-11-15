@@ -5,26 +5,29 @@ using UnityEngine.Tilemaps;
 public class SlideZoneController : MonoBehaviour
 {
     public GameObject player; // 플레이어 오브젝트 참조
-
     private PlayerAction playerAction;
     private Rigidbody2D rb2d;
+
     private float moveSpeed = 5f; // 이동 속도
     private Vector2 moveDirection = Vector2.zero; // 이동 방향
 
-    public CapsuleCollider2D capsuleColliderV; // Vertical 캡슐 콜라이더
-    public CapsuleCollider2D capsuleColliderH; // Horizontal 캡슐 콜라이더
-    public CompositeCollider2D compositeCollider; // 충돌용 콜라이더
+    public Animator animator; // Animator 참조
+
+    public CapsuleCollider2D capsuleCollider;
+    public CircleCollider2D circleCollider;
+    public CompositeCollider2D compositeCollider;
 
     public bool isColliding;
+
+    // 스프라이트 관련 변수
+    public SpriteRenderer spriteRenderer; // 캐릭터 스프라이트 렌더러
+    public Sprite[] directionSprites; // 방향별 스프라이트 배열 (0: 위, 1: 아래, 2: 왼쪽, 3: 오른쪽)
 
     void Awake()
     {
         // 필요한 컴포넌트를 초기화
         playerAction = player.GetComponent<PlayerAction>();
         rb2d = player.GetComponent<Rigidbody2D>();
-
-        // 초기 콜라이더 설정
-        EnableVerticalCollider(); // 기본적으로 Vertical Collider 활성화
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -34,6 +37,8 @@ public class SlideZoneController : MonoBehaviour
             // PlayerAction 비활성화, SlideZoneController 활성화
             playerAction.enabled = false;
             this.enabled = true;
+
+            animator.enabled = false;
         }
     }
 
@@ -45,7 +50,9 @@ public class SlideZoneController : MonoBehaviour
             playerAction.enabled = true;
             this.enabled = false;
 
-            // Rigidbody2D 설정 변경
+            animator.enabled = true;
+
+            // Rigidbody2D 설정 초기화
             rb2d.velocity = Vector2.zero;
             moveDirection = Vector2.zero;
         }
@@ -53,14 +60,14 @@ public class SlideZoneController : MonoBehaviour
 
     void Update()
     {
-        if (capsuleColliderV != null && capsuleColliderH != null && compositeCollider != null)
+        if (circleCollider != null && compositeCollider != null)
         {
-            isColliding = capsuleColliderV.IsTouching(compositeCollider) || capsuleColliderH.IsTouching(compositeCollider);
+            isColliding = circleCollider.IsTouching(compositeCollider);
             Debug.Log($"IsColliding: {isColliding}");
 
-            if (isColliding)
+            if (isColliding && rb2d.velocity == Vector2.zero)
             {
-                Debug.Log("Collider와 CompositeCollider가 충돌 중입니다.");
+                Debug.Log("CircleCollider2D와 CompositeCollider2D가 충돌 중입니다.");
                 SlideMove();
             }
             else
@@ -70,7 +77,7 @@ public class SlideZoneController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Collider가 제대로 연결되지 않았습니다.");
+            Debug.LogWarning("CircleCollider2D 또는 CompositeCollider2D가 제대로 연결되지 않았습니다.");
         }
 
         Debug.Log("Update - rb2d.velocity: " + rb2d.velocity);
@@ -78,46 +85,57 @@ public class SlideZoneController : MonoBehaviour
 
     void SlideMove()
     {
+        // 방향 입력에 따라 moveDirection 설정 및 스프라이트 변경
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             moveDirection = Vector2.up;
-            EnableVerticalCollider(); // 위쪽으로 이동 시 Vertical Collider 활성화
+            SetSprite(0); // 위쪽 방향 스프라이트
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             moveDirection = Vector2.down;
-            EnableVerticalCollider(); // 아래쪽으로 이동 시 Vertical Collider 활성화
+            SetSprite(1); // 아래쪽 방향 스프라이트
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             moveDirection = Vector2.left;
-            EnableHorizontalCollider(); // 왼쪽으로 이동 시 Horizontal Collider 활성화
+            SetSprite(2); // 왼쪽 방향 스프라이트
+            spriteRenderer.flipX = true;
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             moveDirection = Vector2.right;
-            EnableHorizontalCollider(); // 오른쪽으로 이동 시 Horizontal Collider 활성화
+            SetSprite(3); // 오른쪽 방향 스프라이트
+            spriteRenderer.flipX = false;
+        }
+    }
+
+    void SetSprite(int index)
+    {
+        Debug.Log($"SetSprite 호출됨 - Index: {index}");
+
+        if (spriteRenderer != null && directionSprites.Length > index && directionSprites[index] != null)
+        {
+            spriteRenderer.sprite = directionSprites[index];
+            Debug.Log($"Sprite 변경 성공 - New Sprite: {directionSprites[index].name}");
+        }
+        else
+        {
+            Debug.LogWarning("스프라이트가 배열에서 누락되었거나 SpriteRenderer가 할당되지 않았습니다.");
         }
     }
 
     void FixedUpdate()
     {
-        // rb2d.velocity 디버그 출력
-        Debug.Log("FixedUpdate - rb2d.velocity: " + rb2d.velocity);
-        rb2d.MovePosition(rb2d.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
-    }
+        // rb2d.velocity를 사용하여 이동 처리
+        rb2d.velocity = moveDirection * moveSpeed;
 
-    // Vertical Collider 활성화, Horizontal Collider 비활성화
-    void EnableVerticalCollider()
-    {
-        if (capsuleColliderV != null) capsuleColliderV.enabled = true;
-        if (capsuleColliderH != null) capsuleColliderH.enabled = false;
-    }
+        // 이동이 멈췄을 경우 방향 초기화
+        if (moveDirection != Vector2.zero && rb2d.velocity.magnitude < 0.1f)
+        {
+            moveDirection = Vector2.zero;
+        }
 
-    // Horizontal Collider 활성화, Vertical Collider 비활성화
-    void EnableHorizontalCollider()
-    {
-        if (capsuleColliderH != null) capsuleColliderH.enabled = true;
-        if (capsuleColliderV != null) capsuleColliderV.enabled = false;
+        Debug.Log($"FixedUpdate - Velocity: {rb2d.velocity}");
     }
 }
