@@ -37,6 +37,7 @@ public class SlideZoneController : MonoBehaviour
             // PlayerAction 비활성화, SlideZoneController 활성화
             playerAction.enabled = false;
             this.enabled = true;
+            circleCollider.enabled = true;
 
             animator.enabled = false;
         }
@@ -49,6 +50,7 @@ public class SlideZoneController : MonoBehaviour
             // PlayerAction 활성화, SlideZoneController 비활성화
             playerAction.enabled = true;
             this.enabled = false;
+            circleCollider.enabled = false;
 
             animator.enabled = true;
 

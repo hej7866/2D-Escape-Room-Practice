@@ -10,6 +10,16 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public Text itemDescriptionText; // 아이템 설명을 표시할 Text
     public GameObject contextMenuPrefab; // 컨텍스트 메뉴 프리팹
     private static GameObject contextMenuInstance; // 생성된 컨텍스트 메뉴 인스턴스 (싱글톤으로 유지)
+    private Transform canvasTransform;
+
+    private void Start()
+    {
+        canvasTransform = GameObject.Find("Canvas")?.transform;
+        if (canvasTransform == null)
+        {
+            Debug.LogError("Canvas라는 이름의 캔버스가 씬에 없습니다.");
+        }
+    }
 
     private void Update()
     {
@@ -75,7 +85,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 return;
             }
             
-            contextMenuInstance = Instantiate(contextMenuPrefab, Input.mousePosition, Quaternion.identity, FindObjectOfType<Canvas>().transform);
+            contextMenuInstance = Instantiate(contextMenuPrefab, Input.mousePosition, Quaternion.identity, canvasTransform);
             Debug.Log("컨텍스트 메뉴 인스턴스 생성됨");
 
             // 위치 설정 (마우스 위치를 기준으로 왼쪽 하단에 배치)

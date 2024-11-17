@@ -151,3 +151,4 @@ MonoBehaviour:
   itemNameText: {fileID: 0}
   itemDescriptionText: {fileID: 0}
   contextMenuPrefab: {fileID: 1195695819925355005, guid: 5639c02384279df4fbd12e7302d93df8, type: 3}
+  canvas: {fileID: 0}
