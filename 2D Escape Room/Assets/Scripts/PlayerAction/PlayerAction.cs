@@ -18,6 +18,8 @@ public class PlayerAction : MonoBehaviour
     Animator anim;
     SpriteRenderer spriteRenderer;
 
+    
+
     public enum Direction
     {
         None,
@@ -136,16 +138,6 @@ public class PlayerAction : MonoBehaviour
         else if (hDown && h == -1)
         {
             dirVec = Vector3.left;
-        }
-
-        // 스프라이트 변경 처리
-        if (currentDirection == Direction.Horizontal && h < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
-        else if (currentDirection == Direction.Horizontal && h > 0)
-        {
-            spriteRenderer.flipX = false;
         }
 
         //Scan Object

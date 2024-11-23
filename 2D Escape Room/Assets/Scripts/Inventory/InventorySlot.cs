@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,6 +11,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private static GameObject contextMenuInstance; // 생성된 컨텍스트 메뉴 인스턴스 (싱글톤으로 유지)
     private Transform canvasTransform;
 
+    public Inventory inventory; // Inventory 참조 추가
+
     private void Start()
     {
         canvasTransform = GameObject.Find("Canvas")?.transform;
@@ -19,14 +20,14 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         {
             Debug.LogError("Canvas라는 이름의 캔버스가 씬에 없습니다.");
         }
+
+        // Inventory 참조는 Inventory.cs에서 설정해줍니다.
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0)) // 마우스 왼쪽 클릭
         {
-            Debug.Log("마우스 버튼 클릭 감지됨");
-
             // 클릭한 UI 오브젝트를 가져옴
             GameObject clickedObject = GetClickedGameObject();
 
@@ -37,7 +38,6 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 {
                     Destroy(contextMenuInstance);
                     contextMenuInstance = null;
-                    Debug.Log("컨텍스트 메뉴 삭제됨");
                 }
             }
         }
@@ -84,18 +84,15 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 contextMenuInstance = null;
                 return;
             }
-            
-            contextMenuInstance = Instantiate(contextMenuPrefab, Input.mousePosition, Quaternion.identity, canvasTransform);
-            Debug.Log("컨텍스트 메뉴 인스턴스 생성됨");
 
-            // 위치 설정 (마우스 위치를 기준으로 왼쪽 하단에 배치)
+            contextMenuInstance = Instantiate(contextMenuPrefab, Input.mousePosition, Quaternion.identity, canvasTransform);
+
+            // 위치 설정
             RectTransform contextMenuRect = contextMenuInstance.GetComponent<RectTransform>();
             Vector2 mousePosition = Input.mousePosition;
 
-            // 화면 좌표를 월드 좌표로 변환
+            // 메뉴 위치를 마우스 위치에서 약간 오른쪽 위로 조정
             Vector2 menuPosition = mousePosition;
-
-            // 메뉴 위치를 마우스 위치에서 약간 왼쪽 하단으로 조정 (예: x 축 -100, y 축 -50)
             menuPosition.x += 100f; // 오른쪽으로 이동
             menuPosition.y += 100f;  // 위로 이동
 
@@ -118,6 +115,11 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (item.GetItemType() == ItemStruct.ItemType.Consumable)
         {
             Debug.Log($"{item.GetName()} 아이템을 사용합니다.");
+
+            // 인벤토리에서 아이템 제거
+            inventory.RemoveItemFromInventory(item);
+
+            // 슬롯 삭제
             Destroy(gameObject);
         }
         Destroy(contextMenuInstance);
@@ -130,6 +132,12 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (item.GetItemType() == ItemStruct.ItemType.Equipment || item.GetItemType() == ItemStruct.ItemType.KeyItem)
         {
             Debug.Log($"{item.GetName()} 아이템을 장착합니다.");
+
+            // 필요에 따라 인벤토리에서 아이템 제거 또는 상태 변경
+            // inventory.RemoveItemFromInventory(item);
+
+            // 슬롯 삭제 (필요한 경우)
+            // Destroy(gameObject);
         }
         Destroy(contextMenuInstance);
         contextMenuInstance = null;
@@ -141,6 +149,11 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (item.GetItemType() != ItemStruct.ItemType.KeyItem) // KeyItem은 버릴 수 없음
         {
             Debug.Log($"{item.GetName()} 아이템을 버립니다.");
+
+            // 인벤토리에서 아이템 제거
+            inventory.RemoveItemFromInventory(item);
+
+            // 슬롯 삭제
             Destroy(gameObject);
         }
         Destroy(contextMenuInstance);

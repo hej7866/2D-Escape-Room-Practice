@@ -30,6 +30,31 @@ public class SlideZoneController : MonoBehaviour
         rb2d = player.GetComponent<Rigidbody2D>();
     }
 
+    void Update()
+    {
+        if (circleCollider != null && compositeCollider != null)
+        {
+            isColliding = circleCollider.IsTouching(compositeCollider);
+            Debug.Log($"IsColliding: {isColliding}");
+
+            if (isColliding && rb2d.velocity == Vector2.zero)
+            {
+                Debug.Log("CircleCollider2D와 CompositeCollider2D가 충돌 중입니다.");
+                SlideMove();
+            }
+            else
+            {
+                Debug.Log("충돌 없음.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("CircleCollider2D 또는 CompositeCollider2D가 제대로 연결되지 않았습니다.");
+        }
+
+        Debug.Log("Update - rb2d.velocity: " + rb2d.velocity);
+    }
+    
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("SlideZone"))
@@ -60,30 +85,6 @@ public class SlideZoneController : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (circleCollider != null && compositeCollider != null)
-        {
-            isColliding = circleCollider.IsTouching(compositeCollider);
-            Debug.Log($"IsColliding: {isColliding}");
-
-            if (isColliding && rb2d.velocity == Vector2.zero)
-            {
-                Debug.Log("CircleCollider2D와 CompositeCollider2D가 충돌 중입니다.");
-                SlideMove();
-            }
-            else
-            {
-                Debug.Log("충돌 없음.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("CircleCollider2D 또는 CompositeCollider2D가 제대로 연결되지 않았습니다.");
-        }
-
-        Debug.Log("Update - rb2d.velocity: " + rb2d.velocity);
-    }
 
     void SlideMove()
     {

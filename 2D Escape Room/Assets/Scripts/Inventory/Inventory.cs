@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     ItemDatabase itemDatabase;
-    List<ItemStruct> inventory = new List<ItemStruct>();
+    public List<ItemStruct> inventory = new List<ItemStruct>(); // public으로 변경하여 디버깅 시 확인 가능
 
     private Item itemInRange; // 상호작용 가능한 아이템
     private bool isPlayerInRange = false;
@@ -110,7 +110,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    void UpdateInventoryUI()
+    public void UpdateInventoryUI()
     {
         // 기존에 있던 아이템 슬롯을 모두 삭제합니다.
         foreach (Transform child in inventoryGrid)
@@ -129,6 +129,7 @@ public class Inventory : MonoBehaviour
                 slotComponent.item = item;
                 slotComponent.itemNameText = itemNameText; // 아이템 이름 텍스트 연결
                 slotComponent.itemDescriptionText = itemDescriptionText; // 아이템 설명 텍스트 연결
+                slotComponent.inventory = this; // Inventory 참조 전달
             }
 
             Image itemIcon = newSlot.GetComponentInChildren<Image>();
@@ -137,6 +138,26 @@ public class Inventory : MonoBehaviour
             {
                 itemIcon.sprite = item.GetIcon();
             }
+        }
+    }
+
+    // 아이템을 인벤토리에서 제거하는 메서드
+    public void RemoveItemFromInventory(ItemStruct item)
+    {
+        if (inventory.Contains(item))
+        {
+            inventory.Remove(item);
+            Debug.Log($"{item.GetName()}을(를) 인벤토리에서 제거했습니다.");
+
+            // 인벤토리 UI 업데이트
+            if (isInventoryOpen)
+            {
+                UpdateInventoryUI();
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"{item.GetName()}은(는) 인벤토리에 존재하지 않습니다.");
         }
     }
 }
