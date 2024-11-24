@@ -103,13 +103,11 @@ public class SlideZoneController : MonoBehaviour
         {
             moveDirection = Vector2.left;
             SetSprite(2); // 왼쪽 방향 스프라이트
-            spriteRenderer.flipX = true;
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             moveDirection = Vector2.right;
             SetSprite(3); // 오른쪽 방향 스프라이트
-            spriteRenderer.flipX = false;
         }
     }
 
